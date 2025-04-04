@@ -1,7 +1,7 @@
 {
   "name": "@codenameryuu/adonis-datatable",
   "description": "Package server side datatables on AdonisJS 6",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "engines": {
     "node": ">=20.6.0"
   },
@@ -81,12 +81,12 @@
     "adonis",
     "adonisjs"
   ],
-  "author": "Aditya Darma <adhit.boys1@gmail.com>",
+  "author": "Codename Ryuu",
   "license": "MIT",
-  "homepage": "https://github.com/adityadarma/adonis-datatables#readme",
+  "homepage": "https://github.com/codenameryuu/adonis-datatable#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adityadarma/adonis-datatables.git"
+    "url": "git+https://github.com/codenameryuu/adonis-datatable.git"
   },
   "publishConfig": {
     "access": "public",
@@ -136,6 +136,6 @@
     "test": "tests"
   },
   "bugs": {
-    "url": "https://github.com/adityadarma/adonis-datatables/issues"
+    "url": "https://github.com/codenameryuu/adonis-datatable/issues"
   }
 }
