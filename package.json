@@ -1,0 +1,141 @@
+{
+  "name": "@codenameryuu/adonis-datatable",
+  "description": "Package server side datatables on AdonisJS 6",
+  "version": "1.0.5",
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "type": "module",
+  "files": [
+    "build/src",
+    "build/services",
+    "build/providers",
+    "build/stubs",
+    "build/index.d.ts",
+    "build/index.js",
+    "build/configure.d.ts",
+    "build/configure.js"
+  ],
+  "exports": {
+    ".": "./build/index.js",
+    "./datatables_provider": "./build/providers/datatables_provider.js",
+    "./services/main": "./build/services/main.js",
+    "./engines/lucid_datatable": "./build/src/engines/lucid_datatable.js",
+    "./engines/database_datatable": "./build/src/engines/database_datatable.js",
+    "./engines/object_datatable": "./build/src/engines/object_datatable.js",
+    "./types": "./build/src/types/index.js"
+  },
+  "scripts": {
+    "clean": "del-cli build",
+    "copy:templates": "copyfiles \"stubs/**/*.stub\" build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext=.ts",
+    "format": "prettier --write .",
+    "quick:test": "node --import=./tsnode.esm.js --enable-source-maps bin/test.ts",
+    "pretest": "npm run lint",
+    "test": "c8 npm run quick:test",
+    "prebuild": "npm run lint && npm run clean",
+    "build": "npm run clean && tsc",
+    "postbuild": "npm run copy:templates",
+    "release": "release-it",
+    "version": "npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@adonisjs/assembler": "^7.7.0",
+    "@adonisjs/core": "^6.12.0",
+    "@adonisjs/eslint-config": "^1.3.0",
+    "@adonisjs/http-server": "^7.0.0",
+    "@adonisjs/prettier-config": "^1.3.0",
+    "@adonisjs/tsconfig": "^1.3.0",
+    "@japa/assert": "^3.0.0",
+    "@japa/runner": "^3.1.4",
+    "@release-it/conventional-changelog": "^9.0.0",
+    "@swc/core": "^1.6.3",
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^20.14.5",
+    "@types/sprintf-js": "^1.1.4",
+    "c8": "^10.1.2",
+    "copyfiles": "^2.4.1",
+    "del-cli": "^5.1.0",
+    "eslint": "^8.57.0",
+    "luxon": "^3.4.4",
+    "np": "^10.0.6",
+    "prettier": "^3.3.3",
+    "release-it": "^17.10.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "collect.js": "^4.36.1",
+    "edge.js": "^6.0.2",
+    "lodash": "^4.17.21",
+    "sprintf-js": "^1.1.3"
+  },
+  "peerDependencies": {
+    "@adonisjs/core": "^6.2.0",
+    "@adonisjs/lucid": "^20.0.0||^21.0.0"
+  },
+  "keywords": [
+    "datatables",
+    "adonis",
+    "adonisjs"
+  ],
+  "author": "Aditya Darma <adhit.boys1@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/adityadarma/adonis-datatables#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adityadarma/adonis-datatables.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  },
+  "release-it": {
+    "git": {
+      "requireCleanWorkingDir": true,
+      "requireUpstream": true,
+      "commitMessage": "chore(release): ${version}",
+      "tagAnnotation": "v${version}",
+      "push": true,
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": true,
+      "skipChecks": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": {
+          "name": "angular"
+        }
+      }
+    }
+  },
+  "c8": {
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "exclude": [
+      "tests/**"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "@adonisjs/eslint-config/package"
+  },
+  "prettier": "@adonisjs/prettier-config",
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "main": "tsnode.esm.js",
+  "directories": {
+    "test": "tests"
+  },
+  "bugs": {
+    "url": "https://github.com/adityadarma/adonis-datatables/issues"
+  }
+}
