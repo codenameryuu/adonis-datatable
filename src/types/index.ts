@@ -1,32 +1,32 @@
 export interface DataTable {
-  results(): Promise<Record<string, any> | void>;
+  results(): Promise<Record<string, any> | void>
 
-  dataResults(): Promise<any[]>;
+  dataResults(): Promise<any[]>
 
-  count(): Promise<number>;
+  count(): Promise<number>
 
-  totalCount(): Promise<number>;
+  totalCount(): Promise<number>
 
-  filtering(): void;
+  filtering(): void
 
-  columnSearch(): void;
+  columnSearch(): void
 
-  paging(): void;
+  paging(): void
 
-  ordering(): void;
+  ordering(): void
 
-  asJson(): this;
+  asJson(): this
 
-  asArray(): this;
+  asArray(): this
 }
 
 export type Config = {
-  debug: boolean;
-  search: Record<string, boolean>;
-  index_column: string;
-  engines: Record<string, any>;
-  columns: Record<string, string | any>;
+  debug: boolean
+  search: Record<string, boolean>
+  index_column: string
+  engines: Record<string, any>
+  columns: Record<string, string | any>
   json: {
-    header: Record<string, any>;
-  };
-};
+    header: Record<string, any>
+  }
+}

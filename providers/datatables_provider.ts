@@ -1,10 +1,10 @@
-import type { ApplicationService } from "@adonisjs/core/types";
-import { Datatables } from "../src/datatables.js";
-import { DbQueryEventNode } from "@adonisjs/lucid/types/database";
+import type { ApplicationService } from '@adonisjs/core/types'
+import { Datatables } from '../src/datatables.js'
+import { DbQueryEventNode } from '@adonisjs/lucid/types/database'
 
-declare module "@adonisjs/core/types" {
+declare module '@adonisjs/core/types' {
   export interface EventsList {
-    "db:query": DbQueryEventNode;
+    'db:query': DbQueryEventNode
   }
 }
 
@@ -15,11 +15,11 @@ export default class DatatablesProvider {
    * Register bindings to the container
    */
   register() {
-    this.app.container.singleton("datatables", () => {
-      const engines: Record<string, any> = this.app.config.get(`datatables.engines`);
+    this.app.container.singleton('datatables', () => {
+      const engines: Record<string, any> = this.app.config.get(`datatables.engines`)
 
-      return new Datatables(engines);
-    });
+      return new Datatables(engines)
+    })
   }
 
   /**
@@ -43,8 +43,8 @@ export default class DatatablesProvider {
   async shutdown() {}
 }
 
-declare module "@adonisjs/core/types" {
+declare module '@adonisjs/core/types' {
   export interface ContainerBindings {
-    datatables: Datatables;
+    datatables: Datatables
   }
 }
