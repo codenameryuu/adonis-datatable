@@ -1,13 +1,11 @@
 # @codenameryuu/adonis-datatable
 
-[![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] [![npm-downloads]][npm-downloads] ![][typescript-image] [![license-image]][license-url]
-
 Adonis datatable is an inspiration from laravel datatable. It is heavily inspired by the PHP library [Laravel Datatables](https://yajrabox.com/docs/laravel-datatables) and even share some code with services, facade and dependency injection.
 
 ## Requirement
 
-- Adonis Js 6
-- Jquery datatable
+* Adonis Js 6
+* Jquery datatable
 
 ## Installation
 
