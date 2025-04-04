@@ -4,8 +4,8 @@ Adonis datatable is an inspiration from laravel datatable. It is heavily inspire
 
 ## Requirement
 
-* Adonis Js 6
-* Jquery datatable
+- Adonis Js 6
+- Jquery datatable
 
 ## Installation
 
