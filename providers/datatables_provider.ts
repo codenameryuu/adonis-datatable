@@ -1,6 +1,6 @@
 import type { ApplicationService } from '@adonisjs/core/types'
 import { Datatables } from '../src/datatables.js'
-import { DbQueryEventNode } from '@adonisjs/lucid/types/database'
+import type { DbQueryEventNode } from '@adonisjs/lucid/types/database'
 
 declare module '@adonisjs/core/types' {
   export interface EventsList {
