@@ -1,5 +1,5 @@
 import app from '@adonisjs/core/services/app'
-import { Config as DatatablesConfig } from './types/index.js'
+import type { Config as DatatablesConfig } from './types/index.js'
 import lodash from 'lodash'
 
 export default class Config {

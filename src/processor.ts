@@ -1,5 +1,5 @@
 import lodash from 'lodash'
-import Config from './config.js'
+import type Config from './config.js'
 import Helper from './utils/helper.js'
 
 export default class DataProcessor {

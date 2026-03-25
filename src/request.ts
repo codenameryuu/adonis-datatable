@@ -1,4 +1,4 @@
-import { HttpRequest } from '@adonisjs/core/http'
+import type { HttpRequest } from '@adonisjs/core/http'
 
 export default class Request {
   constructor(protected request: HttpRequest) {}

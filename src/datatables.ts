@@ -2,9 +2,9 @@ import { Exception } from '@adonisjs/core/exceptions'
 import LucidDataTable from './engines/lucid_datatable.js'
 import DatabaseDataTable from './engines/database_datatable.js'
 import ObjectDataTable from './engines/object_datatable.js'
-import { DatabaseQueryBuilderContract, Dictionary } from '@adonisjs/lucid/types/querybuilder'
-import { LucidModel, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
-import { DataTableAbstract } from './datatable_abstract.js'
+import type { DatabaseQueryBuilderContract, Dictionary } from '@adonisjs/lucid/types/querybuilder'
+import type { LucidModel, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
+import type { DataTableAbstract } from './datatable_abstract.js'
 
 export class Datatables {
   constructor(protected engines: Record<string, any>) {}
