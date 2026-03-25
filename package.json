@@ -1,7 +1,7 @@
 {
   "name": "@codenameryuu/adonis-datatable",
   "description": "Package server side datatables on Adonis JS 7",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "author": "codenameryuu",
   "license": "MIT",
   "homepage": "https://github.com/codenameryuu/adonis-datatable#readme",
@@ -33,19 +33,20 @@
     "./types": "./build/src/types/index.js"
   },
   "scripts": {
-    "lint": "eslint .",
-    "format": "prettier --write .",
     "clean": "del-cli build",
-    "precompile": "npm run lint && npm run clean",
-    "compile": "tsc --emitDeclarationOnly --declaration",
-    "build": "npm run compile",
+    "copy:templates": "copyfiles \"stubs/**/*.stub\" build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext=.ts",
+    "format": "prettier --write .",
+    "quick:test": "node --import=./tsnode.esm.js --enable-source-maps bin/test.ts",
     "pretest": "npm run lint",
     "test": "c8 npm run quick:test",
-    "typecheck": "tsc --noEmit",
+    "prebuild": "npm run lint && npm run clean",
+    "build": "npm run clean && tsc",
+    "postbuild": "npm run copy:templates",
+    "release": "release-it",
     "version": "npm run build",
-    "prepublishOnly": "npm run build",
-    "release": "np",
-    "quick:test": "node --import=./tsnode.esm.js --enable-source-maps bin/test.ts"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.7.0",
