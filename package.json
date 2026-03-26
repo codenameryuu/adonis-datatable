@@ -1,7 +1,7 @@
 {
   "name": "@codenameryuu/adonis-datatable",
-  "description": "Package server side datatables on Adonis JS 7",
-  "version": "1.7.0",
+  "description": "Server side datatables package for Adonis JS",
+  "version": "1.8.0",
   "author": "codenameryuu",
   "license": "MIT",
   "homepage": "https://github.com/codenameryuu/adonis-datatable#readme",

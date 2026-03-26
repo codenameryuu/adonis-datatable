@@ -5,6 +5,7 @@ Adonis datatable is an inspiration from laravel datatable. It is heavily inspire
 ## Requirement
 
 - Adonis Js 7
+- Lucid 22 or higher
 - Jquery datatable
 
 ## Installation
@@ -19,6 +20,15 @@ yarn add @codenameryuu/adonis-datatable
 
 ```bash
 node ace add @codenameryuu/adonis-datatable
+```
+
+- Make sure to register the provider inside `adonisrc.ts` file.
+
+```typescript
+providers: [
+  // ...
+  () => import('@codenameryuu/adonis-datatable/datatables_provider'),
+],
 ```
 
 ## Usage
