@@ -1,7 +1,7 @@
 {
   "name": "@codenameryuu/adonis-datatable",
   "description": "Server side datatables package for Adonis JS",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "author": "codenameryuu",
   "license": "MIT",
   "homepage": "https://github.com/codenameryuu/adonis-datatable#readme",
@@ -37,8 +37,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write .",
+    "copy:templates": "copyfiles -u 1 \"stubs/**/*.stub\" build/stubs",
     "prebuild": "npm run lint && npm run clean",
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && tsc && npm run copy:templates",
     "release": "release-it",
     "version": "npm run build",
     "prepublishOnly": "npm run build"
