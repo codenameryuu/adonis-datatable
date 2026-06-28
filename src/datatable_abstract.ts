@@ -413,6 +413,22 @@ export abstract class DataTableAbstract implements DataTable {
     return this;
   }
 
+  /**
+   * Send a list of options for the DataTables ColumnControl `searchList` content type.
+   * The `columnDataSrc` should match the column name, data source or index used client-side.
+   *
+   * @see https://datatables.net/extensions/columncontrol/server-side
+   */
+  columnControl(columnDataSrc: string | number, options: any[]): this {
+    if (!this.appends["columnControl"] || typeof this.appends["columnControl"] !== "object") {
+      this.appends["columnControl"] = {};
+    }
+
+    this.appends["columnControl"][columnDataSrc] = options;
+
+    return this;
+  }
+
   order(callback: <T extends abstract new (...args: any) => any>(query: InstanceType<T>) => void): this {
     this.orderCallback = callback;
 

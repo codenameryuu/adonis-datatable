@@ -140,7 +140,16 @@ export default class ObjectDataTable extends DataTableAbstract {
         continue;
       }
 
-      if (!this.request.isColumnSearchable(i) || this.isBlacklisted(column)) {
+      if (this.isBlacklisted(column)) {
+        continue;
+      }
+
+      if (this.request.hasColumnControl(i) && this.request.isColumnSearchable(i, false)) {
+        this.applyColumnControlSearch(i, column);
+        continue;
+      }
+
+      if (!this.request.isColumnSearchable(i)) {
         continue;
       }
 
@@ -167,6 +176,129 @@ export default class ObjectDataTable extends DataTableAbstract {
         })
         .all();
     }
+  }
+
+  /**
+   * Apply the search conditions sent by the DataTables ColumnControl extension.
+   *
+   * @see https://datatables.net/extensions/columncontrol/server-side
+   */
+  protected applyColumnControlSearch(index: number, column: string): void {
+    const self = this;
+
+    if (this.request.hasColumnControlList(index)) {
+      const list = this.request.columnControlList(index).map((value) => self.normalizeColumnControl(value));
+
+      this.items = collect(this.items)
+        .filter((row: Record<string, any>) => list.includes(self.normalizeColumnControl(lodash.get(row, column))))
+        .all();
+    }
+
+    const search = this.request.columnControlSearch(index);
+    if (search && (search.value !== "" || search.logic === "empty" || search.logic === "notEmpty")) {
+      this.items = collect(this.items)
+        .filter((row: Record<string, any>) => self.matchColumnControl(lodash.get(row, column), search))
+        .all();
+    }
+  }
+
+  protected normalizeColumnControl(value: any): string {
+    const text = value === null || value === undefined ? "" : String(value);
+
+    return this.config.isCaseInsensitive() ? text.toLowerCase() : text;
+  }
+
+  protected matchColumnControl(raw: any, search: { value: string; logic: string; type: string; mask?: string }): boolean {
+    const logic = search.logic;
+    const isEmpty = raw === null || raw === undefined || String(raw) === "";
+
+    if (logic === "empty") {
+      return isEmpty;
+    }
+
+    if (logic === "notEmpty") {
+      return !isEmpty;
+    }
+
+    if (search.type === "num") {
+      const left = Number(raw);
+      const right = Number(search.value);
+
+      if (Number.isNaN(left) || Number.isNaN(right)) {
+        return false;
+      }
+
+      switch (logic) {
+        case "notEqual":
+          return left !== right;
+        case "greater":
+          return left > right;
+        case "greaterOrEqual":
+          return left >= right;
+        case "less":
+          return left < right;
+        case "lessOrEqual":
+          return left <= right;
+        case "equal":
+        default:
+          return left === right;
+      }
+    }
+
+    if (search.type === "date") {
+      const dateOnly = !!search.mask && !/[Hhms]/.test(search.mask);
+      const left = this.toTimestamp(raw, dateOnly);
+      const right = this.toTimestamp(search.value, dateOnly);
+
+      if (Number.isNaN(left) || Number.isNaN(right)) {
+        return false;
+      }
+
+      switch (logic) {
+        case "notEqual":
+          return left !== right;
+        case "greater":
+          return left > right;
+        case "less":
+          return left < right;
+        case "equal":
+        default:
+          return left === right;
+      }
+    }
+
+    const haystack = this.normalizeColumnControl(raw);
+    const needle = this.normalizeColumnControl(search.value);
+
+    switch (logic) {
+      case "equal":
+        return haystack === needle;
+      case "notEqual":
+        return haystack !== needle;
+      case "starts":
+        return haystack.startsWith(needle);
+      case "ends":
+        return haystack.endsWith(needle);
+      case "notContains":
+        return !haystack.includes(needle);
+      case "contains":
+      default:
+        return haystack.includes(needle);
+    }
+  }
+
+  protected toTimestamp(value: any, dateOnly: boolean): number {
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return Number.NaN;
+    }
+
+    if (dateOnly) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+    }
+
+    return date.getTime();
   }
 
   paging(): void {

@@ -110,6 +110,66 @@ export default class Request {
     return column && column["name"] && column["name"] !== "" ? column["name"] : column?.["data"];
   }
 
+  /**
+   * Determine whether the column has any active ColumnControl search payload.
+   *
+   * @see https://datatables.net/extensions/columncontrol/server-side
+   */
+  hasColumnControl(index: number): boolean {
+    const columnControl = this.input(`columns.${index}.columnControl`);
+    if (!columnControl) {
+      return false;
+    }
+
+    const value = this.input(`columns.${index}.columnControl.search.value`);
+    const logic: string | undefined = this.input(`columns.${index}.columnControl.search.logic`);
+
+    return (
+      (value !== undefined && value !== null && value !== "") ||
+      logic === "empty" ||
+      logic === "notEmpty" ||
+      this.hasColumnControlList(index)
+    );
+  }
+
+  /**
+   * The input based search payload (searchText, searchNumber, searchDateTime).
+   */
+  columnControlSearch(index: number): { value: string; logic: string; type: string; mask?: string } | null {
+    const search: Record<string, any> | undefined = this.input(`columns.${index}.columnControl.search`);
+    if (!search) {
+      return null;
+    }
+
+    return {
+      value: this.prepareKeyword(search["value"] ?? ""),
+      logic: search["logic"] ?? "contains",
+      type: search["type"] ?? "text",
+      mask: search["mask"],
+    };
+  }
+
+  /**
+   * The list of selected values used by the searchList content type.
+   */
+  columnControlList(index: number): any[] {
+    const list: any = this.input(`columns.${index}.columnControl.list`);
+
+    if (Array.isArray(list)) {
+      return list;
+    }
+
+    if (list && typeof list === "object") {
+      return Object.values(list);
+    }
+
+    return [];
+  }
+
+  hasColumnControlList(index: number): boolean {
+    return this.columnControlList(index).length > 0;
+  }
+
   isPaginationable(): boolean {
     return this.input("start") !== null && this.input("length") !== null && this.input("length") !== -1;
   }

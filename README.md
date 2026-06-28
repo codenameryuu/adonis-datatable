@@ -207,6 +207,58 @@ const datatable = await new ObjectDataTable(user)
   .results()
 ```
 
+## ColumnControl extension
+
+This package supports the [DataTables ColumnControl](https://datatables.net/extensions/columncontrol/) extension's [server-side processing](https://datatables.net/extensions/columncontrol/server-side) protocol out of the box. No extra configuration is required — when ColumnControl (1.1+) augments the request with its filtering parameters, the matching engine applies them automatically.
+
+The following content types are handled per column:
+
+| Content type     | `type` | Supported logic                                                                 |
+| ---------------- | ------ | ------------------------------------------------------------------------------- |
+| `searchText`     | `text` | `contains`, `notContains`, `equal`, `notEqual`, `starts`, `ends`, `empty`, `notEmpty` |
+| `searchNumber`   | `num`  | `equal`, `notEqual`, `greater`, `greaterOrEqual`, `less`, `lessOrEqual`, `empty`, `notEmpty` |
+| `searchDateTime` | `date` | `equal`, `notEqual`, `greater`, `less`, `empty`, `notEmpty` (honours the `mask` option) |
+| `searchList`     | —      | array of values matched exactly and combined with `OR`                          |
+
+### Client-side example
+
+```javascript
+new DataTable('#example', {
+  serverSide: true,
+  ajax: '/users/datatable',
+  columnControl: [
+    {
+      target: 0,
+      content: ['order', 'searchText'],
+    },
+    {
+      target: 1,
+      content: ['searchList'],
+    },
+  ],
+})
+```
+
+### Populating a `searchList`
+
+When using the `searchList` content type, you can send the list of available options back to the client with the `columnControl()` method. The first argument matches (in priority order) the column `name`, the column `data` source, or the column index.
+
+```typescript
+const datatable = await Datatables.lucid(User.query())
+  .setContext(ctx)
+  .columnControl('office', ['Edinburgh', 'Tokyo', 'London'])
+  // or with separate label/value pairs (useful with joins):
+  .columnControl('office_id', [
+    { label: 'Edinburgh', value: 1 },
+    { label: 'Tokyo', value: 2 },
+  ])
+  .results()
+```
+
+This adds a top-level `columnControl` object to the JSON response, as expected by the extension.
+
+If you have defined a custom filter for a column with `filterColumn()`, that callback takes precedence and receives the ColumnControl search value as its keyword.
+
 ## License
 
 This package is open-sourced software licensed under the [MIT license](LICENSE.md).

@@ -318,7 +318,16 @@ export default class DatabaseDataTable extends DataTableAbstract {
         continue;
       }
 
-      if (!this.request.isColumnSearchable(index) || (this.isBlacklisted(column) && !this.hasFilterColumn(column))) {
+      if (this.isBlacklisted(column) && !this.hasFilterColumn(column)) {
+        continue;
+      }
+
+      if (this.request.hasColumnControl(index) && this.request.isColumnSearchable(index, false)) {
+        this.applyColumnControlSearch(index, column);
+        continue;
+      }
+
+      if (!this.request.isColumnSearchable(index)) {
         continue;
       }
 
@@ -331,6 +340,146 @@ export default class DatabaseDataTable extends DataTableAbstract {
         this.compileColumnSearch(index, column, keyword);
       }
     }
+  }
+
+  /**
+   * Apply the search conditions sent by the DataTables ColumnControl extension.
+   *
+   * @see https://datatables.net/extensions/columncontrol/server-side
+   */
+  protected applyColumnControlSearch(index: number, column: string): void {
+    if (this.request.hasColumnControlList(index)) {
+      this.applyColumnControlList(column, this.request.columnControlList(index));
+    }
+
+    const search = this.request.columnControlSearch(index);
+    if (search && (search.value !== "" || search.logic === "empty" || search.logic === "notEmpty")) {
+      if (this.hasFilterColumn(column)) {
+        this.applyFilterColumn(this.getBaseQueryBuilder(), column, search.value);
+      } else {
+        this.compileColumnControlSearch(this.resolveRelationColumn(column), search);
+      }
+    }
+  }
+
+  protected applyColumnControlList(column: string, list: any[]): void {
+    const self = this;
+    const resolved = this.resolveRelationColumn(column);
+
+    this.query.where((query: any) => {
+      for (const value of list) {
+        self.compileExactMatch(query, resolved, String(value), "or");
+      }
+    });
+  }
+
+  protected compileExactMatch(
+    query: ModelQueryBuilderContract<LucidModel, any> | DatabaseQueryBuilderContract<Dictionary<any, string>>,
+    columnName: string,
+    value: string,
+    boolean: string = "or"
+  ): void {
+    let column = this.castColumn(this.addTablePrefix(query, columnName));
+    let keyword = value;
+
+    if (this.config.isCaseInsensitive()) {
+      column = `LOWER(${column})`;
+      keyword = keyword.toLowerCase();
+    }
+
+    const method: string = lodash.lowerFirst(`${boolean}WhereRaw`);
+    (query as any)[method](`${column} = ?`, [keyword]);
+  }
+
+  protected compileColumnControlSearch(column: string, search: { value: string; logic: string; type: string; mask?: string }): void {
+    const wrapped = this.addTablePrefix(this.query, column);
+    const logic = search.logic;
+
+    if (logic === "empty") {
+      this.query.whereRaw(`(${wrapped} IS NULL OR ${wrapped} = ?)`, [""]);
+      return;
+    }
+
+    if (logic === "notEmpty") {
+      this.query.whereRaw(`(${wrapped} IS NOT NULL AND ${wrapped} != ?)`, [""]);
+      return;
+    }
+
+    switch (search.type) {
+      case "num":
+        this.compileNumberSearch(wrapped, logic, search.value);
+        break;
+
+      case "date":
+        this.compileDateSearch(wrapped, logic, search.value, search.mask);
+        break;
+
+      default:
+        this.compileTextSearch(wrapped, logic, search.value);
+    }
+  }
+
+  protected compileTextSearch(column: string, logic: string, value: string): void {
+    let target = this.castColumn(column);
+    let keyword = value;
+
+    if (this.config.isCaseInsensitive()) {
+      target = `LOWER(${target})`;
+      keyword = keyword.toLowerCase();
+    }
+
+    switch (logic) {
+      case "equal":
+        this.query.whereRaw(`${target} = ?`, [keyword]);
+        break;
+      case "notEqual":
+        this.query.whereRaw(`${target} != ?`, [keyword]);
+        break;
+      case "starts":
+        this.query.whereRaw(`${target} LIKE ?`, [`${keyword}%`]);
+        break;
+      case "ends":
+        this.query.whereRaw(`${target} LIKE ?`, [`%${keyword}`]);
+        break;
+      case "notContains":
+        this.query.whereRaw(`${target} NOT LIKE ?`, [`%${keyword}%`]);
+        break;
+      case "contains":
+      default:
+        this.query.whereRaw(`${target} LIKE ?`, [`%${keyword}%`]);
+    }
+  }
+
+  protected compileNumberSearch(column: string, logic: string, value: string): void {
+    const operators: Record<string, string> = {
+      equal: "=",
+      notEqual: "!=",
+      greater: ">",
+      greaterOrEqual: ">=",
+      less: "<",
+      lessOrEqual: "<=",
+    };
+
+    const operator = operators[logic] ?? "=";
+    this.query.whereRaw(`${column} ${operator} ?`, [Number(value)]);
+  }
+
+  protected compileDateSearch(column: string, logic: string, value: string, mask?: string): void {
+    let target = column;
+
+    if (mask && !/[Hhms]/.test(mask)) {
+      target = `DATE(${column})`;
+    }
+
+    const operators: Record<string, string> = {
+      equal: "=",
+      notEqual: "!=",
+      greater: ">",
+      less: "<",
+    };
+
+    const operator = operators[logic] ?? "=";
+    this.query.whereRaw(`${target} ${operator} ?`, [value]);
   }
 
   filterColumn(column: string, callback: <T extends abstract new (...args: any) => any>(query: InstanceType<T>, keyword: string) => void): this {
