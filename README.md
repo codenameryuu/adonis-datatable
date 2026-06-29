@@ -19,7 +19,7 @@ yarn add @codenameryuu/adonis-datatable
 * Configure the package
 
 ```bash
-node ace add @codenameryuu/adonis-datatable
+node ace configure @codenameryuu/adonis-datatable
 ```
 
 * Make sure to register the provider inside `adonisrc.ts` file.
@@ -215,33 +215,32 @@ The following content types are handled per column:
 
 | Content type     | `type` | Supported logic                                                                 |
 | ---------------- | ------ | ------------------------------------------------------------------------------- |
-| `searchText`     | `text` | `contains`, `notContains`, `equal`, `notEqual`, `starts`, `ends`, `empty`, `notEmpty` |
-| `searchNumber`   | `num`  | `equal`, `notEqual`, `greater`, `greaterOrEqual`, `less`, `lessOrEqual`, `empty`, `notEmpty` |
-| `searchDateTime` | `date` | `equal`, `notEqual`, `greater`, `less`, `empty`, `notEmpty` (honours the `mask` option) |
-| `searchList`     | —      | array of values matched exactly and combined with `OR`                          |
+| `searchText` | `text` | `contains` , `notContains` , `equal` , `notEqual` , `starts` , `ends` , `empty` , `notEmpty` |
+| `searchNumber` | `num` | `equal` , `notEqual` , `greater` , `greaterOrEqual` , `less` , `lessOrEqual` , `empty` , `notEmpty` |
+| `searchDateTime` | `date` | `equal` , `notEqual` , `greater` , `less` , `empty` , `notEmpty` (honours the `mask` option) |
+| `searchList` | —      | array of values matched exactly and combined with `OR` |
 
 ### Client-side example
 
 ```javascript
 new DataTable('#example', {
-  serverSide: true,
-  ajax: '/users/datatable',
-  columnControl: [
-    {
-      target: 0,
-      content: ['order', 'searchText'],
-    },
-    {
-      target: 1,
-      content: ['searchList'],
-    },
-  ],
+    serverSide: true,
+    ajax: '/users/datatable',
+    columnControl: [{
+            target: 0,
+            content: ['order', 'searchText'],
+        },
+        {
+            target: 1,
+            content: ['searchList'],
+        },
+    ],
 })
 ```
 
 ### Populating a `searchList`
 
-When using the `searchList` content type, you can send the list of available options back to the client with the `columnControl()` method. The first argument matches (in priority order) the column `name`, the column `data` source, or the column index.
+When using the `searchList` content type, you can send the list of available options back to the client with the `columnControl()` method. The first argument matches (in priority order) the column `name` , the column `data` source, or the column index.
 
 ```typescript
 const datatable = await Datatables.lucid(User.query())
@@ -257,7 +256,7 @@ const datatable = await Datatables.lucid(User.query())
 
 This adds a top-level `columnControl` object to the JSON response, as expected by the extension.
 
-If you have defined a custom filter for a column with `filterColumn()`, that callback takes precedence and receives the ColumnControl search value as its keyword.
+If you have defined a custom filter for a column with `filterColumn()` , that callback takes precedence and receives the ColumnControl search value as its keyword.
 
 ## License
 

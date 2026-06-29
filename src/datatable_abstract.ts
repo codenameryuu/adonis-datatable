@@ -2,7 +2,6 @@ import Request from "./request.js";
 import { HttpContext } from "@adonisjs/core/http";
 import collect from "collect.js";
 import Config from "./config.js";
-import type { Exception } from "@adonisjs/core/exceptions";
 import DataProcessor from "./processor.js";
 import Helper from "./utils/helper.js";
 import type { DataTable } from "./types/index.js";
@@ -210,19 +209,21 @@ export abstract class DataTableAbstract implements DataTable {
     return output;
   }
 
-  protected errorResponse(exception: Exception): Record<string, any> | void {
+  protected errorResponse(exception: unknown): Record<string, any> | void {
     emitter.clearListeners("db:query");
 
     if (!this.ctx) {
       return;
     }
 
+    const stack = exception instanceof Error ? exception.stack : String(exception);
+
     const result = {
       draw: this.request.draw(),
       recordsTotal: this.totalRecords,
       recordsFiltered: 0,
       data: [],
-      error: `Exception Message: ${exception.stack}`,
+      error: `Exception Message: ${stack}`,
     };
 
     return result;
