@@ -9,6 +9,11 @@ coverage
 *.log
 build
 dist
-yarn.lock
 shrinkwrap.yaml
+
+# Depedencies lock
 package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lock
+bun.lockb
